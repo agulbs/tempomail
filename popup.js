@@ -1,29 +1,29 @@
-document.addEventListener('DOMContentLoaded', function() {
-    var checkPageButton = document.getElementById('submit');
+var credentials = {};
 
-    checkPageButton.addEventListener('click', function() {
-        email = document.getElementById('email').value;
+document.addEventListener('DOMContentLoaded', function() {
+
+    document.getElementById('submit').addEventListener('click', function() {
+        var email = document.getElementById('email').value;
 
         params = {
             action: `requestEmailAccess&value=${email}@AppMailer.org`,
-            tyle: "POST"
+            tyle: "GET"
         }
 
         chrome.runtime.sendMessage({
-            params: {
-                action: `requestEmailAccess&value=${email}@AppMailer.org`,
-                tyle: "GET"
-            },
+            params,
             sender: "popup"
         }, response => {
-            console.log(response)
-        });
+            chrome.storage.sync.set({
+                creds: response
+            }, function() {
+                console.log('Value is set to ' + response);
+            });
 
-        // requestData(params).then((res) => {
-        //     console.log(res)
-        // }, (err) => {
-        //     console.log(err)
-        // })
+            chrome.storage.sync.get(['creds'], function(result) {
+                console.log('Value currently is ', result);
+            });
+        });
 
     }, false);
 }, false);

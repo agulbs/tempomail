@@ -1,31 +1,10 @@
-chrome.runtime.onInstalled.addListener(function() {
-
-});
-
-chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
-    if (msg.sender === 'popup') {
-        console.log(msg);
-        requestData(msg['params']).then((res) => {
-            handleData(res).then(sendResponse)
-        })
-
-        return true;
-    }
-});
-
-function handleData(data) {
-    return new Promise(resolve => {
-        // do something async
-        resolve({
-            data: data
-        });
-    });
-}
+// chrome.runtime.onInstalled.addListener(function() {
+//
+// });
 
 async function requestData(params) {
     return await request(params);
 }
-
 
 function request(args) {
     url = `https://temporarymail.com/ajax/api.php?action=${args['action']}`;
@@ -37,3 +16,21 @@ function request(args) {
         },
     });
 }
+
+function handleData(data) {
+    return new Promise(resolve => {
+        resolve({
+            data: data
+        });
+    });
+}
+
+chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
+    if (msg.sender === 'popup') {
+        console.log(msg);
+        requestData(msg['params']).then((res) => {
+            handleData(res).then(sendResponse)
+        });
+        return true;
+    }
+});
