@@ -1,36 +1,17 @@
-// chrome.runtime.onInstalled.addListener(function() {
-//
-// });
-
-async function requestData(params) {
-    return await request(params);
-}
-
-function request(args) {
-    url = `https://temporarymail.com/ajax/api.php?action=${args['action']}`;
-    return $.ajax({
-        url: url,
-        type: args['type'],
-        headers: {
-            "Content-Type": "application/json",
-        },
-    });
-}
-
-function handleData(data) {
-    return new Promise(resolve => {
-        resolve({
-            data: data
-        });
-    });
-}
-
-chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
-    if (msg.sender === 'popup') {
-        console.log(msg);
-        requestData(msg['params']).then((res) => {
-            handleData(res).then(sendResponse)
-        });
-        return true;
+chrome.runtime.onMessage.addListener(
+    function(request, sender, sendResponse) {
+        switch (request.directive) {
+            case "popup-click":
+                // execute the content script
+                chrome.tabs.executeScript(null, { // defaults to the current tab
+                    file: "contentscript.js", // script to inject into page and run in sandbox
+                    allFrames: true // This injects script into iframes in the page and doesn't work before 4.0.266.0.
+                });
+                sendResponse({}); // sending back empty response to sender
+                break;
+            default:
+                // helps debug when request directive doesn't match
+                alert("Unmatched request of '" + request + "' from script to background.js from " + sender);
+        }
     }
-});
+);
