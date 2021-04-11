@@ -166,9 +166,8 @@ function listenForEmails() {
     postData(data).then(res => {
         // console.log(res)
         Object.keys(res).reverse().forEach((msg, idx) => {
-            // res[msg]['idx'] = Object.keys.length - idx;
             if (!(msg in emailMsgs)) {
-                renderEmailMsg(res[msg])
+                renderEmailMsg(res[msg]);
             }
         });
 
@@ -178,10 +177,7 @@ function listenForEmails() {
     }, (err) => {
         // console.log(err)
     })
-
-    // https://temporarymail.com/ajax/?action=checkInbox&value=Cm2it3frRDtP73bGMgNpkzrYRXZbz1UH
 }
-
 
 
 function renderEmailMsg(msg) {
@@ -218,49 +214,30 @@ function renderEmailMsg(msg) {
 
     document.getElementById('emailMsgs').innerHTML += `
         <div class="row mt-1 pb-2" id="${msg.id}" style="font-size:12px;border-bottom:solid 1px black;">
-            <div class="col-4">${dif} ${label} ago<br>(${date})</div>
-            <div class="col-4">${msg.from}</div>
-            <div class="col-4">${msg.subject}</div>
-            <div class="col-1" ></div>
-            <div class="col-10 d-flex justify-content-center" id="${msg.id}Content" style="display:none;font-size:8px;"></div>
-            <div class="col-1" ></div>
+            <div class="col-4 ${msg.id}">${dif} ${label} ago<br>(${date})</div>
+            <div class="col-4 ${msg.id}">${msg.from}</div>
+            <div class="col-4 ${msg.id}">${msg.subject}</div>
         </div>
     `;
 
-    document.getElementById(msg.id).addEventListener('click', function() {
-        viewEmail(msg.id)
-    })
+    document.addEventListener('click', function(e) {
+        if (e.target) {
+            var msg = e.target.className.split(' ')[1];
+            if (msg in emailMsgs) {
+                viewEmail(msg)
+            }
+        }
+    });
+
 }
 
 function viewEmail(id) {
     /*
      * TODO: implement displaying email msg
      */
-    // console.log(`popup::viewEmail: id=${id}`)
-    window.open(`https://temporarymail.com/view/?i=${id}&width=200`)
-
-    fetch(`https://temporarymail.com/view/?i=${id}&width=200`, {
-        method: "GET",
-        headers: {
-            "Content-Type": "application/x-www-form-urlencoded",
-        }
-    }).then(response => {
-        response.text().then(text => {
-
-            // text = text.split('body')[1].split('div')[1];
-            // text = text.substring(11, text.length - 3)
-
-            // var iframe = document.getElementById('messageIframe');
-            // iframe = iframe.contentWindow || (iframe.contentDocument.document || iframe.contentDocument);
-            //
-            // iframe.document.open();
-            // iframe.document.write(text);
-            // iframe.document.close();
-
-        })
-    });
-
-
+    var url = `https://temporarymail.com/view/?i=${id}&width=200`;
+    var frame = document.getElementById("msgFrame");
+    frame.setAttribute("src", url);
 }
 
 
