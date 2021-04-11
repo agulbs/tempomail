@@ -1,5 +1,4 @@
 /* Global Variables */
-var setupFlag;
 var credentials = {};
 var emailMsgs = {};
 var timer;
@@ -14,10 +13,11 @@ function saveOptions(data) {
      *     data: Object { address: "emailAddress", secretKey: "secretKey" }
      */
 
-    console.log(`popup::saveOptions`)
+    // console.log(`popup::saveOptions`)
     let toSave = {
         email: data.address,
-        secret: data.secretKey
+        secret: data.secretKey,
+        created: data.created
     };
 
     credentials = toSave;
@@ -35,7 +35,7 @@ function clearOptions() {
      * Clears data stored in chrome.storage
      */
 
-    console.log(`popup::clearOptions`);
+    // console.log(`popup::clearOptions`);
 
     var remove = [];
 
@@ -49,7 +49,7 @@ function clearOptions() {
         chrome.storage.sync.remove(remove, function(items) {
             chrome.storage.sync.get(function(items) {
                 items.forEach((item) => {
-                    console.log("removed: " + index);
+                    // console.log("removed: " + index);
                 })
             });
         });
@@ -64,47 +64,30 @@ function restoreOptions() {
      * Starts listening for incoming emails.
      */
 
-    console.log(`popup::restoreOptions`)
+    // console.log(`popup::restoreOptions`)
+
     chrome.storage.sync.get([
         'email',
         'secret',
+        'created'
     ], function(items) {
-        if (typeof items.email != "undefined" && typeof items.secret != "undefined") {
-            setupFlag = false;
-            document.getElementById('emailAddress').innerHTML = " " + items.email;
+        var expired = Math.round((new Date(items.created) - new Date()) / 1000);
+
+        if (typeof items.email != "undefined" && typeof items.secret != "undefined" && expired < 21500) {
+            document.getElementById('emailAddress').value = items.email;
             credentials = {
                 email: items.email,
-                secret: items.secret
+                secret: items.secret,
+                created: items.created
             };
+
+            console.log(credentials)
             listenForEmails();
         } else {
-            setupFlag = true;
             getNewEmailAddress();
-            document.getElementById('emailAddress').innerHTML = "Register a new email.";
         }
     });
 
-}
-
-function setDomains() {
-    /*
-     * Retrieves all availble domains & displays them in popup.html
-     */
-
-    console.log(`popup::setDomains`);
-    var data = {
-        action: "getDomains",
-        method: "GET"
-    }
-
-    postData(data).then(res => {
-        res.forEach((r) => {
-            daySelect = document.getElementById('domains');
-            daySelect.options[daySelect.options.length] = new Option('@' + r, r);
-        })
-    }, (err) => {
-        console.log(err)
-    })
 }
 
 function getNewEmailAddress() {
@@ -112,35 +95,37 @@ function getNewEmailAddress() {
      * Creates new email address
      */
 
-    console.log(`popup::getNewEmailAddress`);
+    // console.log(`popup::getNewEmailAddress`);
 
     var data = {
         method: "GET",
-        action: ""
-    }
-
-    if (setupFlag) {
-        data['action'] = `requestEmailAccess&value=random`;
-        setupFlag = false;
-    } else {
-        var email = document.getElementById('email').value
-
-        if (email == "Please enter an email." || email.length < 1) {
-            return false;
-        }
-
-        var domain = document.getElementById('domains');
-        domain = domain.selectedOptions[0].value;
-
-        data['action'] = `requestEmailAccess&value=${email}@${domain}`
+        action: "requestEmailAccess&value=random"
     }
 
     postData(data).then(res => {
-        document.getElementById('email').value = ''
+        res['created'] = new Date().getTime();
+        console.log(res)
         saveOptions(res);
     }, (err) => {
-        console.log(err)
+        // console.log(err)
     })
+}
+
+function copyAddress() {
+    /*
+     * Implements copy for email addres.
+     */
+
+    var emailInput = document.getElementById("emailAddress");
+    var capitalizedAddress = emailInput.value;
+
+    emailInput.value = capitalizedAddress.toLowerCase();
+    emailInput.select();
+    document.execCommand("copy");
+
+    emailInput.value = capitalizedAddress;
+
+    emailInput.setSelectionRange(0, 255);
 }
 
 function setTimer(func, time) {
@@ -152,7 +137,7 @@ function setTimer(func, time) {
      *     time: int
      */
 
-    console.log(`popup::setTimer: func=${func}, time=${time}`);
+    // console.log(`popup::setTimer: func=${func}, time=${time}`);
 
     if (typeof(timer) != "undefined") {
         clearInterval(timer);
@@ -166,7 +151,7 @@ function listenForEmails() {
      * Checks & handles emails
      */
 
-    console.log(`popup::listenForEmails`);
+    // console.log(`popup::listenForEmails`);
 
     if (!('secret' in credentials)) {
         return false;
@@ -179,6 +164,7 @@ function listenForEmails() {
     }
 
     postData(data).then(res => {
+        // console.log(res)
         Object.keys(res).reverse().forEach((msg, idx) => {
             // res[msg]['idx'] = Object.keys.length - idx;
             if (!(msg in emailMsgs)) {
@@ -188,9 +174,9 @@ function listenForEmails() {
 
         emailMsgs = res;
 
-        console.log(res)
+        // console.log(res)
     }, (err) => {
-        console.log(err)
+        // console.log(err)
     })
 
     // https://temporarymail.com/ajax/?action=checkInbox&value=Cm2it3frRDtP73bGMgNpkzrYRXZbz1UH
@@ -235,6 +221,9 @@ function renderEmailMsg(msg) {
             <div class="col-4">${dif} ${label} ago<br>(${date})</div>
             <div class="col-4">${msg.from}</div>
             <div class="col-4">${msg.subject}</div>
+            <div class="col-1" ></div>
+            <div class="col-10 d-flex justify-content-center" id="${msg.id}Content" style="display:none;font-size:8px;"></div>
+            <div class="col-1" ></div>
         </div>
     `;
 
@@ -245,19 +234,34 @@ function renderEmailMsg(msg) {
 
 function viewEmail(id) {
     /*
-     * TODO: implement displaying email msg 
+     * TODO: implement displaying email msg
      */
-    console.log(`popup::viewEmail: id=${id}`)
+    // console.log(`popup::viewEmail: id=${id}`)
+    window.open(`https://temporarymail.com/view/?i=${id}&width=200`)
 
-    var data = {
+    fetch(`https://temporarymail.com/view/?i=${id}&width=200`, {
         method: "GET",
-        action = ""
-    }
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+        }
+    }).then(response => {
+        response.text().then(text => {
+
+            // text = text.split('body')[1].split('div')[1];
+            // text = text.substring(11, text.length - 3)
+
+            // var iframe = document.getElementById('messageIframe');
+            // iframe = iframe.contentWindow || (iframe.contentDocument.document || iframe.contentDocument);
+            //
+            // iframe.document.open();
+            // iframe.document.write(text);
+            // iframe.document.close();
+
+        })
+    });
 
 
-    // https://temporarymail.com/view/?i=Cu4fB9noSaDZW0MHdlEsN7ixyZsYj10E&width=930
 }
-
 
 
 function postData(data) {
@@ -270,11 +274,15 @@ function postData(data) {
      *         action: "api action"  string
      */
 
-    console.log(`popup::postData: data=${data}`);
-
-    var url = `https://temporarymail.com/ajax/api.php?action=${data['action']}`;
+    // console.log(`popup::postData: data=${data}`);
+    var url;
+    if ('url' in data) {
+        url = data.url;
+    } else {
+        url = `https://temporarymail.com/ajax/api.php?action=${data['action']}`;
+    }
     return fetch(url, {
-        method: "GET",
+        method: data.mehtod,
         headers: {
             "Content-Type": "application/x-www-form-urlencoded",
         }
@@ -282,9 +290,10 @@ function postData(data) {
 }
 
 /* Event Listners */
-document.getElementById('getNewEmailAddress').addEventListener('click', getNewEmailAddress)
+document.getElementById('changeEmail').addEventListener('click', getNewEmailAddress);
+document.getElementById('copyAddress').addEventListener('click', copyAddress);
 document.addEventListener('DOMContentLoaded', function() {
+    // clearOptions();
     restoreOptions();
-    setDomains();
     setTimer(listenForEmails, 3000);
 });
