@@ -1,6 +1,7 @@
 /* Global Variables */
 var credentials = {};
 var emailMsgs = {};
+var activeMsg;
 var timer;
 
 function saveOptions(data) {
@@ -224,20 +225,33 @@ function renderEmailMsg(msg) {
         if (e.target) {
             var msg = e.target.className.split(' ')[1];
             if (msg in emailMsgs) {
-                viewEmail(msg)
+                viewEmail(msg, false)
             }
         }
     });
 
 }
 
-function viewEmail(id) {
+function viewEmail(id, close) {
     /*
      * TODO: implement displaying email msg
      */
     var url = `https://temporarymail.com/view/?i=${id}&width=200`;
     var frame = document.getElementById("msgFrame");
-    frame.setAttribute("src", url);
+
+    console.log(close)
+
+
+    if (close) {
+        var closeBtn = document.getElementById('closeEmail');
+        closeBtn.setAttribute("style", "display: none !imporant");
+        frame.setAttribute("src", "");
+    } else {
+        var closeBtn = document.getElementById('closeEmail');
+        closeBtn.setAttribute("style", "display: block !imporant");
+        frame.setAttribute("src", url);
+    }
+
 }
 
 
@@ -269,6 +283,9 @@ function postData(data) {
 /* Event Listners */
 document.getElementById('changeEmail').addEventListener('click', getNewEmailAddress);
 document.getElementById('copyAddress').addEventListener('click', copyAddress);
+document.getElementById('closeEmail').addEventListener('click', function() {
+    viewEmail(0, true);
+});
 document.addEventListener('DOMContentLoaded', function() {
     // clearOptions();
     restoreOptions();
