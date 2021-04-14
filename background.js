@@ -3,8 +3,10 @@ function responseMsg(msg) {
 }
 
 chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
-    tabID = tabId;
-    chrome.tabs.sendMessage(tabId, {
-        text: 'pasteEmail'
-    }, responseMsg);
+    if (changeInfo.status == 'complete' && tab.active) {
+        chrome.tabs.sendMessage(tabId, {
+            cmd: 'pasteEmail'
+        }, responseMsg);
+    }
+
 });
