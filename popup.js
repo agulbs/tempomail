@@ -91,12 +91,77 @@ function restoreOptions() {
 
 }
 
+/*
+
+	Toggle loading icon
+	
+*/
+
+var buttonElements = {};
+
+function toggleLoading(element){
+	
+	if(element.attr('data-loading') == "1"){
+		
+		element.html(buttonElements[element]);
+		element.attr('data-loading', 0);
+		
+	}
+	
+	else{
+		
+		buttonElements[element] = element.html();
+		element.width(element.width());
+		
+		element.html('<i style="margin:0 auto;" class="gg-spinner"></i>');
+		element.attr('data-loading', "1");
+		
+	}
+	
+}
+
+/*
+
+	Notifications
+	
+*/
+
+function showNotification(message, color){
+	
+	if(color == "red"){
+		
+		$("#notificationBox").attr('class', 'redNotification');
+		$("#notificationIcon").html('<i class="gg-times"></i>');
+		
+	}
+	
+	if(color == "green"){
+		
+		$("#notificationBox").attr('class', 'greenNotification');
+		$("#notificationIcon").html('<i class="gg-check"></i>');
+		
+	}
+	
+	$("#notificationText").text(message);
+	$("#notificationBox").slideDown('fast');
+	
+	setInterval(function(){
+		
+		$("#notificationBox").slideUp('fast');
+		
+	}, 5000);
+	
+	
+}
+
 function getNewEmailAddress() {
     /*
      * Creates new email address
      */
 
     // console.log(`popup::getNewEmailAddress`);
+	
+	toggleLoading($("#changeEmail"));
 
     var data = {
         method: "GET",
@@ -104,9 +169,17 @@ function getNewEmailAddress() {
     }
 
     postData(data).then(res => {
-        res['created'] = new Date().getTime();
-        console.log(res)
-        saveOptions(res);
+		
+		setTimeout(function(){
+			
+			toggleLoading($("#changeEmail"));
+
+			res['created'] = new Date().getTime();
+			console.log(res);
+			saveOptions(res);
+		
+		}, 1000);
+		
     }, (err) => {
         // console.log(err)
     })
@@ -116,6 +189,8 @@ function copyAddress() {
     /*
      * Implements copy for email addres.
      */
+	 
+	showNotification('Your address has been copied', 'green');
 
     var emailInput = document.getElementById("emailAddress");
     var capitalizedAddress = emailInput.value;
@@ -289,5 +364,5 @@ document.getElementById('closeEmail').addEventListener('click', function() {
 document.addEventListener('DOMContentLoaded', function() {
     // clearOptions();
     restoreOptions();
-    setTimer(listenForEmails, 3000);
+    setTimer(listenForEmails, 8000);
 });
