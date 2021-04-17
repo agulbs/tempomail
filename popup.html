@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
+
 <head>
 
     <style>
@@ -32,40 +33,46 @@
         .em-input {
             height: 30px;
         }
-		
-		#notificationBox{
-		
-			display:none;
-			position:absolute;left:0;bottom:0;height:50px;width:100%;font-weight:300;text-align:center;padding:12px;
-		
-		}
-		
-		.redNotification{
-		
-			color:white;
-			background-color:#bb4a45;
-		
-		}
-		
-		.greenNotification{
-		
-			color:white;
-			background-color:#6fbd65;
-		
-		}
-		
-		.noEvent{
-		
-			cursor: not-allowed !important;
-			
-		}
-		
-		.emailMeta{
-		
-			cursor:pointer;
-		
-		}
-		
+
+        #notificationBox {
+
+            display: none;
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            height: 50px;
+            width: 100%;
+            font-weight: 300;
+            text-align: center;
+            padding: 12px;
+
+        }
+
+        .redNotification {
+
+            color: white;
+            background-color: #bb4a45;
+
+        }
+
+        .greenNotification {
+
+            color: white;
+            background-color: #6fbd65;
+
+        }
+
+        .noEvent {
+
+            cursor: not-allowed !important;
+
+        }
+
+        .emailMeta {
+
+            cursor: pointer;
+
+        }
     </style>
 
     <!-- Required meta tags -->
@@ -81,102 +88,102 @@
 
 <body style="background-color:#F8F8F8">
 
-	<div id="panelPage">
-	
-		<div class="container-fluid pt-2">
-			<div class="row">
-				<div class="col-12">
-					<div class="row">
-						<div class="col-2">
-							<img src="https://temporarymail.com/images/logo.png" style="width:80px;" />
-						</div>
-						<div class="col-10" style="text-align:left;margin-top: -5px;padding-left: 15px;">
-							<a style="text-decoration:none;font-size: 36px;margin-top: -10px;font-weight:700;color:#007bff;" target="_blank" href="https://temporarymail.com/">
-								Temporary<span style="color:#da4453;">Mail</span>.com
-							</a>
-							<div style="font-weight:300;margin-top: -8px;font-size: 18px;padding-left: 5px;">
-								A simple disposable email service
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-		
-		<div style="position:absolute;left:0;height:20px;width:100%;box-shadow:0 0.25rem .25rem rgba(0,0,0,.045) !important"></div>
-		
-		<div style="padding-top:20px;padding-bottom:20px;"></div>
-		<p class="text-center">
-			Your temporary email address
-		</p>
-		<div class="input-group mb-3">
-			<input id="emailAddress" placeholder="Loading ..." type="text" class="form-control shadow-sm p-3 bg-white text-center" placeholder="Recipient's username" readonly>
-			<button class="btn btn-primary" type="button" id="changeEmail">Change</button>
-			<button class="btn btn-secondary" type="button" id="copyAddress">Copy</button>
-		</div>
-		<p class="text-center">Your temporary inbox</p>
-		<div class="row headers" style="padding:20px;margin-top:10px;">
-			<div class="col-4"><i class="fa fa-calendar-o" aria-hidden="true"></i> Date</div>
-			<div class="col-4"><i class="fa fa-user" aria-hidden="true"></i> Sender</div>
-			<div class="col-4"><i class="fa fa-comment" aria-hidden="true"></i> Title</div>
-		</div>
-		
-		<div class="row" style="background-color:#FFFFFF">
-			<div class="col-12 text-center" id="emailMsgs"></div>
-			
-			
-		</div>
-	
-	</div>
-	
-	<div id="emailPage" style="display:none;">
-	
-		<div style="position:relative;height:60px;">
-		
-			<div style="float:left;padding :10px;">
-			
-				<button id="closeEmail" class="btn btn-primary" type="button">
-				
-					<i class="fa fa-angle-double-left" aria-hidden="true"></i> Return
-					
-				</button>
-			
-			</div>
-			
-			<div style="float:right;padding :10px;">
-			
-				<a id="inboxAddress" style="border-radius:0;" href="https://temporarymail.com/#" target="_blank" class="btn btn-primary">
-				
-					Options
-					
-				</a>
-			
-			</div>
-		
-		</div>
+    <div id="panelPage">
 
-		<div style="text-align: center;height:100px;background-color: #007bff;color: white;font-size: 20px;font-weight: 300;padding: 15px;">
+        <div class="container-fluid pt-2">
+            <div class="row">
+                <div class="col-12">
+                    <div class="row">
+                        <div class="col-2">
+                            <img src="https://temporarymail.com/images/logo.png" style="width:80px;" />
+                        </div>
+                        <div class="col-10" style="text-align:left;margin-top: -5px;padding-left: 15px;">
+                            <a style="text-decoration:none;font-size: 36px;margin-top: -10px;font-weight:700;color:#007bff;" target="_blank" href="https://temporarymail.com/">
+                                Temporary<span style="color:#da4453;">Mail</span>.com
+                            </a>
+                            <div style="font-weight:300;margin-top: -8px;font-size: 18px;padding-left: 5px;">
+                                A simple disposable email service
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-			<i class="fa fa-comments-o" aria-hidden="true"></i> Subject
-			
-			<div id="emailSubject" style="font-size:32px;">Email subject</div>
+        <div style="position:absolute;left:0;height:20px;width:100%;box-shadow:0 0.25rem .25rem rgba(0,0,0,.045) !important"></div>
 
-		</div>
-		
-		<iframe style="width:100%;min-height:300px;" src="" id="msgFrame"></iframe>
-	
-	</div>
+        <div style="padding-top:20px;padding-bottom:20px;"></div>
+        <p class="text-center">
+            Your temporary email address
+        </p>
+        <div class="input-group mb-3">
+            <input id="emailAddress" placeholder="Loading ..." type="text" class="form-control shadow-sm p-3 bg-white text-center" placeholder="Recipient's username" readonly>
+            <button class="btn btn-primary" type="button" id="changeEmail">Change</button>
+            <button class="btn btn-secondary" type="button" id="copyAddress">Copy</button>
+        </div>
+        <p class="text-center">Your temporary inbox</p>
+        <div class="row headers" style="padding:20px;margin-top:10px;">
+            <div class="col-4"><i class="fa fa-calendar-o" aria-hidden="true"></i> Date</div>
+            <div class="col-4"><i class="fa fa-user" aria-hidden="true"></i> Sender</div>
+            <div class="col-4"><i class="fa fa-comment" aria-hidden="true"></i> Title</div>
+        </div>
 
-	<div id="notificationBox">
-	
-		<span id="notificationIcon"></span>
-		<span id="notificationText"></span>
-	
-	</div>
+        <div class="row" style="background-color:#FFFFFF">
+            <div class="col-12 text-center" id="emailMsgs"></div>
+
+
+        </div>
+
+    </div>
+
+    <div id="emailPage" style="display:none;">
+
+        <div style="position:relative;height:60px;">
+
+            <div style="float:left;padding :10px;">
+
+                <button id="closeEmail" class="btn btn-primary" type="button">
+
+                    <i class="fa fa-angle-double-left" aria-hidden="true"></i> Return
+
+                </button>
+
+            </div>
+
+            <div style="float:right;padding :10px;">
+
+                <a id="inboxAddress" style="border-radius:0;" href="https://temporarymail.com/#" target="_blank" class="btn btn-primary">
+
+                    Options
+
+                </a>
+
+            </div>
+
+        </div>
+
+        <div style="text-align: center;height:100px;background-color: #007bff;color: white;font-size: 20px;font-weight: 300;padding: 15px;">
+
+            <i class="fa fa-comments-o" aria-hidden="true"></i> Subject
+
+            <div id="emailSubject" style="font-size:32px;">Email subject</div>
+
+        </div>
+
+        <iframe style="width:100%;min-height:300px;" src="" id="msgFrame"></iframe>
+
+    </div>
+
+    <div id="notificationBox">
+
+        <span id="notificationIcon"></span>
+        <span id="notificationText"></span>
+
+    </div>
 
     <script src="jquery-3.6.0.min.js"></script>
     <script src="popup.js"></script>
-	
+
 </body>
 
 </html>
