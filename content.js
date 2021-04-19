@@ -47,12 +47,11 @@ function typeEmail(e) {
 }
 
 function renderPasteEmailIcon() {
-    console.log("running")
     var tags = document.querySelectorAll('input[name*="email"]:enabled:not([readonly]):not([type="checkbox"]):not([type="radio"]),input[type=email]:enabled:not([readonly])');
     var i = 0;
     for (var tag of tags) {
         if (tag.getAttribute("data-tmpmail-button") == "1") {
-            return false;
+            continue;
         }
 
         var parent = tag.parentElement;
@@ -84,8 +83,7 @@ window.onload = function() {
     renderPasteEmailIcon();
 }
 
-
-document.addEventListener('DOMNodeInserted', function() {
+document.addEventListener('DOMNodeInserted', function(nodes) {
     renderPasteEmailIcon()
 });
 document.addEventListener('contextmenu', function(e) {
