@@ -73,23 +73,6 @@ function renderPasteEmailIcon() {
     }
 }
 
-let observer = new MutationObserver((mutations) => {
-    mutations.forEach((mutation) => {
-        let oldValue = mutation.oldValue;
-        let newValue = mutation.target.textContent;
-        if (oldValue !== newValue) {
-            renderPasteEmailIcon();
-        }
-    });
-});
-
-observer.observe(document.body, {
-    characterDataOldValue: true,
-    subtree: true,
-    childList: true,
-    characterData: true
-});
-
 window.onload = function() {
     chrome.storage.sync.get(['email', 'secret', 'created'], function(items) {
         var expired = Math.round((new Date(items.created) - new Date()) / 1000);
@@ -101,6 +84,10 @@ window.onload = function() {
     renderPasteEmailIcon();
 }
 
+
+document.addEventListener('DOMNodeInserted', function() {
+    renderPasteEmailIcon()
+});
 document.addEventListener('contextmenu', function(e) {
     contextClickedOn = e.path[0]
 }, false);
