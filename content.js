@@ -13,6 +13,27 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 });
 
 
+function getNewEmail() {
+    var data = {
+        method: "GET",
+        action: "requestEmailAccess&value=random"
+    }
+
+    postData(data).then(res => {
+        email = res.address
+        let toSave = {
+            email: res.address,
+            secret: res.secretKey,
+            created: new Date().getTime()
+        };
+
+        chrome.storage.sync.set(toSave, function() {});
+
+    }, (err) => {
+        // console.log(err)
+    })
+}
+
 function insertEmail(e) {
     if (isOverImgBg(e)) {
         typeEmail(e);
@@ -77,6 +98,8 @@ window.onload = function() {
         var expired = Math.round((new Date(items.created) - new Date()) / 1000);
         if (typeof items.email != "undefined" && typeof items.secret != "undefined" && expired < 21500) {
             email = items.email
+        } else {
+            getNewEmail();
         }
     })
 
