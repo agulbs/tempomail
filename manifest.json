@@ -2,14 +2,15 @@
     "name": "TemporaryMail.com - A simple disposable email service",
     "version": "1.0",
     "description": "Allows you to easily use disposable email addresses directly in your browser, without having to visit another site.",
-    "permissions": ["storage", "https://temporarymail.com/ajax/api.php", "activeTab", "<all_urls>"],
+    "permissions": ["storage", "webNavigation", "contextMenus", "https://temporarymail.com/ajax/api.php", "activeTab", "<all_urls>"],
     "background": {
         "scripts": ["jquery-3.6.0.min.js", "background.js"],
         "persistent": false
     },
     "content_scripts": [{
         "matches": ["<all_urls>"],
-        "js": ["content.js"]
+        "js": ["content.js"],
+        "run_at": "document_end"
     }],
 
     "browser_action": {

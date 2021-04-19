@@ -1,13 +1,15 @@
-function responseMsg(msg) {
-    console.log(msg)
-}
+chrome.runtime.onInstalled.addListener(function() {
+    chrome.contextMenus.create({
+        id: "pasteEmail",
+        title: "Paste TemporaryMail",
+        contexts: ["all"],
+    });
+});
 
-chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
-    // if (changeInfo.status == 'complete' && tab.active) {
-    if (tab.active) {
-        chrome.tabs.sendMessage(tabId, {
-            cmd: 'pasteEmail'
-        }, responseMsg);
-    }
-
+chrome.contextMenus.onClicked.addListener(function(info, tab) {
+    chrome.tabs.sendMessage(tab.id, {
+        pasteEmail: true
+    }, function(response) {
+        console.log(response)
+    })
 });
