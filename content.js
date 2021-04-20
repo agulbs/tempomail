@@ -7,7 +7,7 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
         sendResponse({
             complete: true
         });
-        contextClickedOn.value = this.email
+        contextClickedOn.value = this.email.toLowerCase();
         return;
     }
 });
@@ -48,10 +48,6 @@ function mouseMove(e) {
     }
 }
 
-function mouseEnterOut(e) {
-    setTMBtn(e.target);
-}
-
 function isOverImgBg(e) {
     return (e.clientX - e.target.getBoundingClientRect().left) / (e.target.scrollWidth - 20) * 100 > 97;
 }
@@ -59,8 +55,8 @@ function isOverImgBg(e) {
 function typeEmail(e) {
 
     var inputElement = e['path'][0];
-    inputElement.setAttribute("value", email);
-    inputElement.value = email;
+    inputElement.setAttribute("value", email.toLowerCase());
+    inputElement.value = email.toLowerCase();
     const o = new Event('input', {
         bubbles: !0
     });
